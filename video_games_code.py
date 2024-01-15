@@ -5,10 +5,14 @@ import plotly.graph_objects as go
 df =pd.read_csv("vgsales.csv")
 
 #Funçao para obter o top 10 jogos que venderam no ano (determinado pelo usuario, ano padrão 2020)
-def top_10_year(df=df,year=2020):
+def top_10_year(df=df,year=2020,padrao=True):
     result = df[df['Year'] == year].reset_index()
-    result = result.iloc[:,2:7]
-    return result.head(10)
+    if padrao:
+        result = result.iloc[:,2:7]
+        return result.head(10)
+    else:
+        result = result[['Name','Year','Genre','Publisher']]
+        return result.head(10)
 
 top_10_year(year=2000)
 
@@ -31,4 +35,8 @@ fig.show()
 df_games = df.copy()
 df_games= df_games.drop(columns=['Platform','Rank'])
 df_games_sales = df_games.groupby(by=['Name','Year','Genre','Publisher']).sum().reset_index().sort_values(by='Global_Sales',ascending=False)
+#df_games_sales['rank'] = df_games_sales['Global_Sales'].rank(ascending=False)
 df_games_sales.head(10)
+
+#Top 10 jogos que venderam no ano de 2000 sem considerar a plataforma.
+top_10_year(df=df_games_sales,year=2000,padrao=False)
